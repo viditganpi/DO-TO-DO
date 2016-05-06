@@ -6,7 +6,8 @@
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timePicker" />
+        android:id="@+id/timePicker"
+        android:layout_gravity="center_horizontal"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -19,6 +20,18 @@
         android:layout_height="wrap_content"
         android:text="Choose Location"
         android:id="@+id/place_button"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pick Date"
+        android:id="@+id/datepicker"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Event detail"
+        android:id="@+id/title"
         />
 
 </LinearLayout>

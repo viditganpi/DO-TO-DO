@@ -2,14 +2,20 @@ package com.example.vidit.do_to_do;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -28,11 +34,17 @@ public class RegisterTask extends AppCompatActivity {
     private Button button;
     private Button place_button;
     private Task task;
+    private Button datepicker;
+    static final int DIALOG_ID = 0;
     NotificationManager notificationManager;
     boolean isNotifActive = false;
     int notifID = 33;
     private int hour = 23;
     private int min = 24;
+    int year_x,month_x,day_x;
+    private TaskDbHelper mHelper;
+    private EditText title;
+
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
@@ -44,7 +56,10 @@ public class RegisterTask extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker);
         button = (Button) findViewById(R.id.button);
         place_button = (Button) findViewById(R.id.place_button);
+        datepicker = (Button) findViewById(R.id.datepicker);
+        title = (EditText) findViewById(R.id.title);
         task = new Task();
+        task.setTitle(title.getText().toString());
         button.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -78,9 +93,43 @@ public class RegisterTask extends AppCompatActivity {
 
 
         );
+        datepicker.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog(DIALOG_ID);
+                    }
+                }
+        );
 
+    //    mHelper = new TaskDbHelper(this);
     }
-    public void handleNotif(int hour ,int min){
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if(id == DIALOG_ID)
+                return new DatePickerDialog(this,dpickerlistner,year_x,month_x,day_x);
+        return null;
+    }
+    private DatePickerDialog.OnDateSetListener dpickerlistner
+            = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            year_x = year;
+            month_x = monthOfYear;
+            day_x = dayOfMonth;
+            task.setYear(year);
+            task.setDay(day_x);
+            task.setMonth(month_x);
+            Toast.makeText(RegisterTask.this,year_x + "/" + month_x + "/" + day_x,Toast.LENGTH_LONG).show();
+           // insertindb(task);
+            Intent i = new Intent(RegisterTask.this,Main2Activity.class);
+            startActivity(i);
+            finish();
+        }
+    };
+
+    public void handleNotif(int hour , int min){
         Calendar c = Calendar.getInstance();
         c.set(c.HOUR_OF_DAY,hour);
         c.set(c.MINUTE,min-15);
@@ -98,6 +147,8 @@ public class RegisterTask extends AppCompatActivity {
             if(result_code==RESULT_OK){
                 Place place = PlacePicker.getPlace(this,data);
                 String place_addr = place.toString();
+                final CharSequence name = place.getName();
+                task.setLocation(name.toString());
                 Toast.makeText(getBaseContext(),place_addr,Toast.LENGTH_LONG).show();
             }
         }

@@ -150,7 +150,7 @@ public class MainActivity extends BaseActivity {
             if (fbaccessToken != null && fbaccessToken.length() > 0) {
                 loginButton = (LoginButton) findViewById(R.id.login_button);
                 loginButton.setVisibility(View.GONE);
-                Intent i = new Intent(this,RegisterTask.class);
+                Intent i = new Intent(this,Main2Activity.class);
                 startActivity(i);
                 finish();
             }
