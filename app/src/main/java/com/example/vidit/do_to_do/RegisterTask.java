@@ -1,6 +1,10 @@
 package com.example.vidit.do_to_do;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,13 +20,19 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class RegisterTask extends AppCompatActivity {
     private TimePicker timePicker;
     private Button button;
     private Button place_button;
     private Task task;
-    private int hour;
-    private int min;
+    NotificationManager notificationManager;
+    boolean isNotifActive = false;
+    int notifID = 33;
+    private int hour = 23;
+    private int min = 24;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
@@ -44,6 +54,7 @@ public class RegisterTask extends AppCompatActivity {
                         task.setHour(hour);
                         task.setMinute(min);
                         Toast.makeText(getBaseContext(),hour + ":" + min,Toast.LENGTH_SHORT).show();
+                        handleNotif(hour,min);
                     }
                 }
         );
@@ -64,7 +75,23 @@ public class RegisterTask extends AppCompatActivity {
                         }
                     }
                 }
+
+
         );
+
+    }
+    public void handleNotif(int hour ,int min){
+        Calendar c = Calendar.getInstance();
+        c.set(c.HOUR_OF_DAY,hour);
+        c.set(c.MINUTE,min-15);
+        c.set(c.SECOND,0);
+        // int tot_sec=5;
+        // Long alert_time = new GregorianCalendar().getTimeInMillis()+tot_sec*1000;
+        Intent alertIntent = new Intent(this,AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+
     }
     protected void onActivityResult(int request_code,int result_code, Intent data){
         if(request_code==PLACE_REQUEST){
