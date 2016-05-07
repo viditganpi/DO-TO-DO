@@ -44,6 +44,9 @@ public class RegisterTask extends AppCompatActivity {
     int year_x,month_x,day_x;
     private TaskDbHelper mHelper;
     private EditText title;
+    String title1;
+    String location;
+    Button submit;
 
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
@@ -59,7 +62,9 @@ public class RegisterTask extends AppCompatActivity {
         datepicker = (Button) findViewById(R.id.datepicker);
         title = (EditText) findViewById(R.id.title);
         task = new Task();
+        submit = (Button) findViewById(R.id.submit);
         task.setTitle(title.getText().toString());
+        title1 = title.getText().toString();
         button.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -101,7 +106,18 @@ public class RegisterTask extends AppCompatActivity {
                     }
                 }
         );
-
+        submit.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SQLiteHandler sqLiteHandler = new SQLiteHandler(getApplicationContext());
+                        sqLiteHandler.addEvent(title1,location,day_x,month_x,year_x,hour,min);
+                        Intent i = new Intent(RegisterTask.this,Main2Activity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                }
+        );
     //    mHelper = new TaskDbHelper(this);
     }
 
@@ -123,9 +139,7 @@ public class RegisterTask extends AppCompatActivity {
             task.setMonth(month_x);
             Toast.makeText(RegisterTask.this,year_x + "/" + month_x + "/" + day_x,Toast.LENGTH_LONG).show();
            // insertindb(task);
-            Intent i = new Intent(RegisterTask.this,Main2Activity.class);
-            startActivity(i);
-            finish();
+
         }
     };
 
@@ -134,6 +148,9 @@ public class RegisterTask extends AppCompatActivity {
         c.set(c.HOUR_OF_DAY,hour);
         c.set(c.MINUTE,min-15);
         c.set(c.SECOND,0);
+        c.set(c.DAY_OF_MONTH,day_x);
+        c.set(c.MONTH,month_x);
+        c.set(c.YEAR,year_x);
         // int tot_sec=5;
         // Long alert_time = new GregorianCalendar().getTimeInMillis()+tot_sec*1000;
         Intent alertIntent = new Intent(this,AlertReceiver.class);
@@ -149,6 +166,7 @@ public class RegisterTask extends AppCompatActivity {
                 String place_addr = place.toString();
                 final CharSequence name = place.getName();
                 task.setLocation(name.toString());
+                location = name.toString();
                 Toast.makeText(getBaseContext(),place_addr,Toast.LENGTH_LONG).show();
             }
         }

@@ -23,7 +23,7 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        mHelper = new TaskDbHelper(this);
+       // mHelper = new TaskDbHelper(this);
         mlistview = (ListView) findViewById(R.id.list);
         button = (Button) findViewById(R.id.register);
         button.setOnClickListener(
@@ -36,7 +36,7 @@ public class Main2Activity extends AppCompatActivity {
                     }
                 }
         );
-        SQLiteDatabase db = mHelper.getReadableDatabase();
+       /* SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
                 new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COL_TASK_TITLE},
                 null, null, null, null, null);
@@ -45,20 +45,22 @@ public class Main2Activity extends AppCompatActivity {
             Log.d(TAG, "Task: " + cursor.getString(idx));
         }
         cursor.close();
-        db.close();
+        db.close();*/
         updateUI();
     }
     private void updateUI() {
         ArrayList<String> taskList = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getReadableDatabase();
+        SQLiteHandler sqLiteHandler = new SQLiteHandler(getApplicationContext());
+        taskList = sqLiteHandler.getEventsDetails();
+        /*SQLiteDatabase db = mHelper.getReadableDatabase();
         String selectQuery = "SELECT  * FROM " + TaskContract.TaskEntry.TABLE;
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, null);*/
         /*Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
                 new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COL_TASK_TITLE,TaskContract.TaskEntry.COL_TASK_LOCATION
                 ,TaskContract.TaskEntry.COL_TASK_YEAR,TaskContract.TaskEntry.COL_TASK_MONTH,TaskContract.TaskEntry.COL_TASK_DATE
                         ,TaskContract.TaskEntry.COL_TASK_HOUR,TaskContract.TaskEntry.COL_TASK_MIN},
                 null, null, null, null, null);*/
-        while (cursor.moveToNext()) {
+       /* while (cursor.moveToNext()) {
             int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
             int idx1 = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_LOCATION);
             int idx2 = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_YEAR);
@@ -70,7 +72,7 @@ public class Main2Activity extends AppCompatActivity {
                     + cursor.getString(idx4) + cursor.getString(idx5) + cursor.getString(idx6);
             taskList.add(ans);
         }
-
+        */
         if (mAdapter == null) {
             mAdapter = new ArrayAdapter<>(this,
                     R.layout.item_todo,
@@ -83,7 +85,7 @@ public class Main2Activity extends AppCompatActivity {
             mAdapter.notifyDataSetChanged();
         }
 
-        cursor.close();
-        db.close();
+        /*cursor.close();
+        db.close();*/
     }
 }
